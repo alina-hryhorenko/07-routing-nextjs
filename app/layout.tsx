@@ -22,7 +22,7 @@ export default function RootLayout({
         <TanStackProvider>
           <Header />
           {children}
-          {modal} {/* ← ОСЬ ЦЕ КЛЮЧОВЕ */}
+          {modal}
           <Footer />
         </TanStackProvider>
       </body>
