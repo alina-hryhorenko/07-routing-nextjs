@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
 import type { NoteTag } from "@/types/note";
@@ -18,15 +18,24 @@ interface Props {
 export default function NotesClient({ tag }: Props) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [search]);
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", page, search, tag],
+    queryKey: ["notes", page, debouncedSearch, tag],
     queryFn: () =>
       fetchNotes({
         page,
         perPage: 12,
-        search,
+        search: debouncedSearch,
         ...(tag ? { tag } : {}),
       }),
   });
