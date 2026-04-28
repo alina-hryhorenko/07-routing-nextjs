@@ -3,8 +3,9 @@ import {
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import { fetchNotes } from "@/lib/api";
-import NotesClient from "@/app/notes/Notes.client";
+import { fetchNotes } from "@/lib/api/notes";
+import type { NoteTag } from "@/types/note";
+import NotesClient from "./Notes.client";
 
 interface Props {
   params: Promise<{
@@ -17,8 +18,8 @@ export default async function FilterPage({ params }: Props) {
 
   const queryClient = new QueryClient();
 
-  const selectedTag = slug[0];
-  const tag = selectedTag === "all" ? undefined : selectedTag;
+  const selectedTag = slug?.[0] ?? "all";
+  const tag = selectedTag === "all" ? undefined : (selectedTag as NoteTag);
 
   await queryClient.prefetchQuery({
     queryKey: ["notes", 1, "", tag],
